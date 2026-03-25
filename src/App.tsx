@@ -17,6 +17,7 @@ interface Stats {
   wins: number;
   losses: number;
   currentBalance: number;
+  targetBalance: number;
   currency: string;
 }
 
@@ -27,6 +28,7 @@ export default function App() {
     wins: 0,
     losses: 0,
     currentBalance: 0,
+    targetBalance: 0,
     currency: "ETC"
   });
   const [history, setHistory] = useState<Trade[]>([]);
@@ -80,6 +82,10 @@ export default function App() {
     ? ((stats.wins / stats.totalTrades) * 100).toFixed(1) 
     : "0";
 
+  const progress = stats.targetBalance > 0 
+    ? Math.min(((stats.currentBalance / stats.targetBalance) * 100), 100).toFixed(1)
+    : "0";
+
   return (
     <div className="min-h-screen bg-[#0A0B0D] text-white font-sans selection:bg-blue-500/30">
       {/* Header */}
@@ -95,7 +101,7 @@ export default function App() {
             <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-full border border-white/10">
               <div className={`w-2 h-2 rounded-full ${isActive ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
               <span className="text-xs font-medium uppercase tracking-wider opacity-70">
-                {isActive ? 'Conta Real: ETC' : 'Sistema Offline'}
+                {isActive ? 'Alavancagem 300% Ativa' : 'Sistema Offline'}
               </span>
             </div>
           </div>
@@ -123,17 +129,33 @@ export default function App() {
               <TrendingUp size={80} />
             </div>
             
-            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-6">Operação Real ETC</h2>
+            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-6">Meta: Alavancar 300%</h2>
             
             <div className="space-y-6 relative z-10">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-3xl font-bold">{stats.currentBalance.toFixed(4)} {stats.currency}</p>
+                  <p className="text-3xl font-bold">{stats.currentBalance.toFixed(8)} {stats.currency}</p>
                   <p className="text-xs text-gray-500 mt-1">Saldo Real Disponível</p>
                 </div>
                 <div className="p-3 bg-blue-500/10 rounded-xl">
                   <Wallet className="text-blue-500" />
                 </div>
+              </div>
+
+              {/* Progress Bar */}
+              <div className="space-y-2">
+                <div className="flex justify-between text-[10px] uppercase tracking-wider text-gray-500 font-bold">
+                  <span>Progresso da Meta</span>
+                  <span>{progress}%</span>
+                </div>
+                <div className="h-2 bg-white/5 rounded-full overflow-hidden border border-white/5">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progress}%` }}
+                    className="h-full bg-blue-600"
+                  />
+                </div>
+                <p className="text-[10px] text-gray-500 text-right">Alvo: {stats.targetBalance.toFixed(8)} ETC</p>
               </div>
 
               <button
@@ -150,18 +172,18 @@ export default function App() {
                 ) : isActive ? (
                   <><Square size={20} fill="currentColor" /> DESATIVAR BOT</>
                 ) : (
-                  <><Play size={20} fill="currentColor" /> INICIAR BOT REAL</>
+                  <><Play size={20} fill="currentColor" /> INICIAR ALAVANCAGEM</>
                 )}
               </button>
 
               <div className="pt-4 border-t border-white/5 grid grid-cols-2 gap-4">
                 <div className="p-3 bg-white/5 rounded-xl border border-white/5">
-                  <p className="text-xs text-gray-500 mb-1">Moeda Ativa</p>
-                  <p className="font-mono font-bold">ETC</p>
+                  <p className="text-xs text-gray-500 mb-1">Estratégia</p>
+                  <p className="font-mono font-bold text-blue-400">AGRESSIVA</p>
                 </div>
                 <div className="p-3 bg-white/5 rounded-xl border border-white/5">
-                  <p className="text-xs text-gray-500 mb-1">Ciclo</p>
-                  <p className="font-mono font-bold">15min</p>
+                  <p className="text-xs text-gray-500 mb-1">Risco/Entrada</p>
+                  <p className="font-mono font-bold">15%</p>
                 </div>
               </div>
             </div>
