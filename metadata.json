@@ -1,0 +1,5 @@
+{
+  "name": "Coinbase Alpha Bot",
+  "description": "Automated trading bot for Coinbase with high-accuracy triggers, risk management, and real-time monitoring.",
+  "requestFramePermissions": []
+}
